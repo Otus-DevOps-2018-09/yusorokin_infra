@@ -1,0 +1,11 @@
+{
+    "project_id": "ifra-666",
+    "source_image_family": "reddit-base",
+    "machine_type": "f1-micro",
+    "image_description": "Baked reddit-full image made from reddit-app image using packer",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "tags": "puma-server",
+    "ssh_username": "appuser"
+}

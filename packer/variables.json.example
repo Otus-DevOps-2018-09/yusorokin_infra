@@ -1,0 +1,10 @@
+{
+    "project_id": "ifra-666",
+    "source_image_family": "ubuntu-1604-lts",
+    "machine_type": "f1-micro",
+    "image_description": "reddit-app made with packer",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "tags": "puma-server"
+}
