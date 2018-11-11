@@ -81,6 +81,75 @@ gcloud compute firewall-rules create default-puma-server \
 * Шаблон дополнен параметрами и файлом параметров.
 
 ### Задание со *
-* Создан шаблон baked образа immutable.json на основе базового образа, созданного в основоном задании;
+* Создан шаблон baked образа immutable.json на основе базового образа, созданного в основном задании;
 * В шаблоне использован измененный скрипт deploy.sh и новый скрипт systemd_service.sh, который создает файл сервиса puma и запускает его через systemd;
 * Создан скрипт для поднятия инстанса ВМ create-redditvm.sh из созданного образа семейства reddit-full.
+
+
+## Homework 6
+
+### Задание со *
+Нашел как минимум два способа добавления ключей в проект:
+1. Команда:
+    ```sh
+    resource "google_compute_project_metadata_item" "default" {
+      project = "${var.project}"
+      key = "ssh-keys"
+      value = "appuser1:${file(var.public_key_path)}"
+    }
+    ```
+2. Команда:
+    ```sh
+    resource "google_compute_project_metadata" "default" {
+      project = "${var.project}"
+      metadata {
+        ssh-keys = "appuser1:${file(var.public_key_path)}"
+      }
+    }
+    ```
+
+Добавил три ключа командой
+```sh
+resource "google_compute_project_metadata_item" "default" {
+  project = "${var.project}"
+  key = "ssh-keys"
+  value = "appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}appuser3:${file(var.public_key_path)}"
+}
+```
+
+Добавил ключ пользователя appuser_web через веб-интерфейс. Затем применил `terraform apply`.
+
+Какие проблемы выявил:
+* *Очевидная:* Ключ appuser_web удалился;
+* *Менее очевидная:* Перебрал несколько вариантов добавления нескольких ключей и получил следующие проблемы:
+* * Добавляются лишние переносы строк (`\n`) после каждого ключа и еще один для последнего ключа при следующем формате:
+    ```sh
+    value = <<EOF
+      appuser1:${file(var.public_key_path)}
+      appuser2:${file(var.public_key_path)}
+      appuser3:${file(var.public_key_path)}
+    EOF
+    ```
+    Скрин https://drive.google.com/open?id=1Wj2vz1MoV2MCg4qOQWO49cNGvwl3HVhF
+* * Добавляется лишь один лишний перенос строки после последнего ключа, и выглядит нечитабельно:
+    ```sh
+    value = "appuser1:${file(var.public_key_path)}appuser2:${file(var.public_key_path)}appuser3:${file(var.public_key_path)}"
+    ```
+    Скрин https://drive.google.com/open?id=1mlX2D0ERR0NKqBDCAqGqPiyVkOmsMppk
+  Возможно ничего страшного в этом и нет, но выглядит странно.
+
+### Задание с **
+
+### Создание балансировщика веб-сервера
+
+Для создания балансировщика потребовалось:
+* Включить инстанс веб-сервера в группу инстансов google_compute_instance_group;
+* Настроить для группы инстансов перенаправление трафика на порт 9292;
+* Создать google_compute_health_check по порту tcp-9292 определения работающего инстанса;
+* Создать google_compute_backend_service, который перенаправляет трафик на инстанс группы google_compute_instance_group в зависимости от состояния google_compute_health_check;
+* Обозначить в google_compute_backend_service именованый порт port_name = "puma-9292" для перенаправления HTTP-трафика на tcp-9292, который описан в google_compute_instance_group;
+* Создать правило google_compute_url_map для перенаправления всего трафика на google_compute_backend_service;
+* Создать google_compute_target_http_proxy, который перенаправляет трафик исходя из правил, заданных в google_compute_url_map;
+* Создать глобальное правило перенаправления трафика (google_compute_global_forwarding_rule) по HTTP, которому и присваивается внешний ip-адрес и которое перенаправляет трафик на google_compute_target_http_proxy.
+
+Для шаблона инастанса была создана переменная count, в которой определяется количество создаваемых инстансов.
