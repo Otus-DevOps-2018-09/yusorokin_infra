@@ -1,0 +1,10 @@
+{
+    "project_id": "infra-221411",
+    "source_image_family": "ubuntu-1604-lts",
+    "machine_type": "f1-micro",
+    "image_description": "reddit-app pre-baked image with MongoDb installed",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "ssh_username": "dendy"
+}

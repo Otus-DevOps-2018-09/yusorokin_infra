@@ -1,5 +1,6 @@
 INFRA.code-workspace
 variables.json
+*.old
 
 *.tfstate
 *.tfstate.*.backup
