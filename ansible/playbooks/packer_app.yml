@@ -2,17 +2,6 @@
 - name: Update cache and install ruby and bundle
   hosts: all
   become: true
-  #tags: ruby
 
   roles:
     - app
-
-
-  # tasks:
-  #   - name: Apt update
-  #     apt:
-  #       update_cache: yes
-  #       name:
-  #         - ruby-full
-  #         - ruby-bundler
-  #         - build-essential
