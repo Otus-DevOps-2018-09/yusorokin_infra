@@ -3,5 +3,5 @@
   debug:
     msg: "This host is in {{ env }} environment!!!"
 
-- include: ruby.yml
-- include: puma.yml
+- include: install_mongo.yml
+- include: config_mongo.yml
