@@ -11,3 +11,16 @@ variables.json
 *.retry
 jdauphant.nginx
 vault.key
+infra_db_role
+
+# Vagrant & molecule
+.vagrant/
+*.log
+*.pyc
+.molecule
+.cache
+.pytest_cache
+
+py_env_ansible/
+.vscode/
+ansible/old/db/
